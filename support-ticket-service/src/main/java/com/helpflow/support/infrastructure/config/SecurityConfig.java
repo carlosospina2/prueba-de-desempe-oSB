@@ -46,7 +46,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
@@ -55,15 +54,10 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+        return new org.springframework.security.authentication.ProviderManager(provider);
     }
 }
