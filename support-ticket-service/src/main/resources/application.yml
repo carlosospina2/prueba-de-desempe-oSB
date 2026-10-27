@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: support-ticket-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/helpflow}
+    username: ${DATABASE_USER:helpflow}
+    password: ${DATABASE_PASSWORD:helpflow_dev}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+      minimum-idle: 1
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 20
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-to-a-long-random-secret-at-least-32-characters}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+helpflow:
+  sla:
+    hours-per-priority:
+      BAJA: 72
+      MEDIA: 24
+      ALTA: 8
+      "CRÍTICA": 2
+    escalation-threshold-minutes: 60
+    escalation-check-ms: 60000
+    max-active-tickets-per-technician: 5
+  dispatch:
+    url: ${DISPATCH_URL:http://localhost:8081}
