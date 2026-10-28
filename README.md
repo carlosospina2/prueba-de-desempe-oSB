@@ -1,4 +1,4 @@
-# HelpFlow — Prueba de Desempeño SkillBridge
+# HelpFlow — Prueba de Desempeño 
 
 Sistema de gestión de tickets de soporte técnico con arquitectura de microservicios y arquitectura hexagonal.
 
