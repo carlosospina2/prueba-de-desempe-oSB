@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: test-secret-key-must-be-at-least-32-chars-long
+    expiration-minutes: 120
+
+helpflow:
+  dispatch:
+    url: http://localhost:8081
+  sla:
+    hours-per-priority:
+      BAJA: 72
+      MEDIA: 24
+      ALTA: 8
+      "CRÍTICA": 2
+    escalation-threshold-minutes: 60
+    escalation-check-ms: 60000
+    max-active-tickets-per-technician: 5

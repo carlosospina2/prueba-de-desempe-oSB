@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 760" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker>
+    <marker id="arrb" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#2980b9"/></marker>
+    <marker id="arrg" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#27ae60"/></marker>
+    <marker id="arrp" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#8e44ad"/></marker>
+  </defs>
+  <rect width="720" height="760" fill="#f0f4f8" rx="12"/>
+  <rect x="20" y="14" width="680" height="38" rx="8" fill="#1e3a5f"/>
+  <text x="360" y="38" text-anchor="middle" fill="white" font-size="15" font-weight="bold">Comunicacion entre Microservicios — HelpFlow</text>
+  <rect x="30" y="72" width="110" height="52" rx="8" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+  <text x="85" y="94" text-anchor="middle" fill="white" font-weight="bold">USUARIO</text>
+  <text x="85" y="110" text-anchor="middle" fill="#dbeeff" font-size="10">ROLE_USUARIO</text>
+  <rect x="580" y="72" width="110" height="52" rx="8" fill="#8e44ad" stroke="#7d3c98" stroke-width="2"/>
+  <text x="635" y="94" text-anchor="middle" fill="white" font-weight="bold">TECNICO</text>
+  <text x="635" y="110" text-anchor="middle" fill="#e8d5f7" font-size="10">ROLE_TECNICO</text>
+  <rect x="225" y="72" width="160" height="52" rx="8" fill="#1e3a5f" stroke="#154360" stroke-width="2"/>
+  <text x="305" y="94" text-anchor="middle" fill="white" font-weight="bold">support-ticket-service</text>
+  <text x="305" y="110" text-anchor="middle" fill="#aed6f1" font-size="10">:8080</text>
+  <rect x="420" y="72" width="130" height="52" rx="8" fill="#2c3e50" stroke="#1a252f" stroke-width="2"/>
+  <text x="485" y="94" text-anchor="middle" fill="white" font-weight="bold">PostgreSQL</text>
+  <text x="485" y="110" text-anchor="middle" fill="#aed6f1" font-size="10">:5432</text>
+  <rect x="30" y="680" width="340" height="52" rx="8" fill="#8e44ad" stroke="#6c3483" stroke-width="2"/>
+  <text x="200" y="702" text-anchor="middle" fill="white" font-weight="bold">technician-dispatch-service</text>
+  <text x="200" y="718" text-anchor="middle" fill="#e8d5f7" font-size="10">:8081 · POST /technician-dispatch · hash determinista</text>
+  <line x1="85" y1="124" x2="85" y2="670" stroke="#3498db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="305" y1="124" x2="305" y2="670" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="485" y1="124" x2="485" y2="670" stroke="#2c3e50" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="635" y1="124" x2="635" y2="670" stroke="#8e44ad" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="20" y="140" width="690" height="20" rx="4" fill="#e8f8f5" stroke="#a9dfbf" stroke-width="1"/>
+  <text x="360" y="154" text-anchor="middle" fill="#1e8449" font-size="10" font-weight="bold">Registro de usuario</text>
+  <line x1="85" y1="172" x2="299" y2="172" stroke="#3498db" stroke-width="1.5" marker-end="url(#arrb)"/>
+  <text x="192" y="167" text-anchor="middle" fill="#2471a3" font-size="10">POST /auth/register</text>
+  <line x1="305" y1="182" x2="479" y2="190" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="184" text-anchor="middle" fill="#333" font-size="10">INSERT users (BCrypt)</text>
+  <line x1="299" y1="205" x2="90" y2="205" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrg)"/>
+  <text x="192" y="200" text-anchor="middle" fill="#1e8449" font-size="10">&#123; token: JWT &#125;</text>
+  <rect x="20" y="220" width="690" height="20" rx="4" fill="#eaf2fb" stroke="#aed6f1" stroke-width="1"/>
+  <text x="360" y="234" text-anchor="middle" fill="#1a5276" font-size="10" font-weight="bold">Crear ticket</text>
+  <line x1="85" y1="252" x2="299" y2="252" stroke="#3498db" stroke-width="1.5" marker-end="url(#arrb)"/>
+  <text x="192" y="246" text-anchor="middle" fill="#2471a3" font-size="10">POST /api/tickets  (Bearer JWT)</text>
+  <rect x="220" y="260" width="170" height="20" rx="4" fill="#1e3a5f"/>
+  <text x="305" y="274" text-anchor="middle" fill="white" font-size="10">JwtFilter + @PreAuthorize</text>
+  <line x1="305" y1="288" x2="479" y2="288" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="283" text-anchor="middle" fill="#333" font-size="10">SELECT user (validar activo)</text>
+  <rect x="220" y="296" width="170" height="20" rx="4" fill="#fef9e7" stroke="#f39c12" stroke-width="1"/>
+  <text x="305" y="310" text-anchor="middle" fill="#7d6608" font-size="10">Calcular SLA deadline</text>
+  <line x1="305" y1="322" x2="205" y2="678" stroke="#8e44ad" stroke-width="1.5" marker-end="url(#arrp)"/>
+  <text x="218" y="362" fill="#6c3483" font-size="10">POST /technician-dispatch</text>
+  <text x="218" y="376" fill="#6c3483" font-size="10">&#123; ticketId, categoria, prioridad &#125;</text>
+  <line x1="195" y1="678" x2="295" y2="354" stroke="#8e44ad" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrp)"/>
+  <text x="158" y="418" fill="#6c3483" font-size="10">&#123; tecnicoId,</text>
+  <text x="158" y="432" fill="#6c3483" font-size="10">  disponibilidad,</text>
+  <text x="158" y="446" fill="#6c3483" font-size="10">  tiempoEstimado &#125;</text>
+  <line x1="305" y1="464" x2="479" y2="464" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="458" text-anchor="middle" fill="#333" font-size="10">INSERT ticket (ASIGNADO)</text>
+  <line x1="305" y1="480" x2="479" y2="480" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="475" text-anchor="middle" fill="#333" font-size="10">INSERT ticket_history</text>
+  <line x1="299" y1="496" x2="90" y2="496" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrg)"/>
+  <text x="192" y="491" text-anchor="middle" fill="#1e8449" font-size="10">Ticket ASIGNADO</text>
+  <rect x="20" y="512" width="690" height="20" rx="4" fill="#f9ebff" stroke="#d7bde2" stroke-width="1"/>
+  <text x="360" y="526" text-anchor="middle" fill="#6c3483" font-size="10" font-weight="bold">Tecnico actualiza estado a RESUELTO</text>
+  <line x1="635" y1="544" x2="311" y2="544" stroke="#8e44ad" stroke-width="1.5" marker-end="url(#arrp)"/>
+  <text x="473" y="538" text-anchor="middle" fill="#6c3483" font-size="10">PATCH /api/tickets/&#123;id&#125;/status  (Bearer JWT)</text>
+  <line x1="305" y1="558" x2="479" y2="558" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="552" text-anchor="middle" fill="#333" font-size="10">UPDATE ticket RESUELTO</text>
+  <line x1="305" y1="574" x2="479" y2="574" stroke="#1e3a5f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="392" y="569" text-anchor="middle" fill="#333" font-size="10">INSERT ticket_history</text>
+  <rect x="220" y="582" width="170" height="20" rx="4" fill="#27ae60"/>
+  <text x="305" y="596" text-anchor="middle" fill="white" font-size="10">tickets.resolved++ (Micrometer)</text>
+  <line x1="629" y1="614" x2="311" y2="614" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrg)"/>
+  <text x="470" y="609" text-anchor="middle" fill="#1e8449" font-size="10">Ticket RESUELTO</text>
+  <rect x="390" y="634" width="310" height="52" rx="6" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
+  <text x="545" y="654" text-anchor="middle" fill="#856404" font-weight="bold" font-size="11">Escalamiento automatico</text>
+  <text x="545" y="670" text-anchor="middle" fill="#856404" font-size="10">@Scheduled cada 60 s · tickets.escalated++</text>
+</svg>

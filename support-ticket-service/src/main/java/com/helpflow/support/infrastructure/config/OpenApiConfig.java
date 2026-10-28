@@ -1,4 +1,4 @@
-﻿package com.helpflow.support.infrastructure.config;
+package com.helpflow.support.infrastructure.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * Swagger UI shows the global Authorize button and allows sending
  * Authorization: Bearer <token> on protected endpoints.
  *
- * This class only configures OpenAPI documentation — it does not change
+ * This class only configures OpenAPI documentation -- it does not change
  * any Spring Security rules.
  */
 @Configuration
@@ -27,13 +27,11 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("HelpFlow Support Ticket API")
-                        .description("Sistema de Gestión de Tickets de Soporte TI — HelpFlow")
+                        .description("Sistema de Gestion de Tickets de Soporte TI - HelpFlow")
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("HelpFlow Team")
                                 .email("soporte@helpflow.com")))
-                // Register the scheme globally so every endpoint that declares
-                // @SecurityRequirement(name = "bearerAuth") picks it up automatically.
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new Components()
                         .addSecuritySchemes(SECURITY_SCHEME_NAME,

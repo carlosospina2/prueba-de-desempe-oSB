@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 620" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker>
+    <marker id="arrw" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="white"/></marker>
+    <marker id="arrdash" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#aaa"/></marker>
+  </defs>
+  <rect width="700" height="620" fill="#f0f4f8" rx="12"/>
+  <rect x="20" y="14" width="660" height="38" rx="8" fill="#1e3a5f"/>
+  <text x="350" y="38" text-anchor="middle" fill="white" font-size="15" font-weight="bold">Arquitectura Hexagonal — support-ticket-service</text>
+  <rect x="20" y="62" width="660" height="540" rx="10" fill="#eaf0fb" stroke="#b0c4de" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="36" y="82" fill="#7f8c8d" font-size="11" font-style="italic">Infraestructura (Adaptadores)</text>
+  <rect x="160" y="120" width="380" height="370" rx="10" fill="#fdfefe" stroke="#3498db" stroke-width="2"/>
+  <text x="175" y="140" fill="#2980b9" font-size="11" font-style="italic">Aplicacion (Puertos + Servicios)</text>
+  <polygon points="350,165 440,195 440,275 350,305 260,275 260,195" fill="#eaf9ea" stroke="#27ae60" stroke-width="2.5"/>
+  <text x="350" y="210" text-anchor="middle" fill="#1e8449" font-weight="bold" font-size="13">Dominio</text>
+  <text x="350" y="228" text-anchor="middle" fill="#1e8449" font-size="11">Ticket · User · Technician</text>
+  <text x="350" y="244" text-anchor="middle" fill="#1e8449" font-size="11">TicketHistory</text>
+  <text x="350" y="264" text-anchor="middle" fill="#666" font-size="10">Sin dependencias de framework</text>
+  <rect x="170" y="320" width="155" height="68" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="248" y="338" text-anchor="middle" fill="#1a5276" font-weight="bold" font-size="11">Casos de Uso</text>
+  <text x="248" y="354" text-anchor="middle" fill="#1a5276" font-size="10">CreateTicketService</text>
+  <text x="248" y="368" text-anchor="middle" fill="#1a5276" font-size="10">UpdateTicketStatusService</text>
+  <text x="248" y="382" text-anchor="middle" fill="#1a5276" font-size="10">EscalateTicketsService</text>
+  <rect x="375" y="320" width="155" height="68" rx="6" fill="#fef9e7" stroke="#f39c12" stroke-width="1.5"/>
+  <text x="453" y="338" text-anchor="middle" fill="#7d6608" font-weight="bold" font-size="11">Puertos Salida</text>
+  <text x="453" y="354" text-anchor="middle" fill="#7d6608" font-size="10">TicketRepositoryPort</text>
+  <text x="453" y="368" text-anchor="middle" fill="#7d6608" font-size="10">UserRepositoryPort</text>
+  <text x="453" y="382" text-anchor="middle" fill="#7d6608" font-size="10">TechnicianDispatchPort</text>
+  <rect x="170" y="410" width="360" height="30" rx="5" fill="#e8daef" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="350" y="430" text-anchor="middle" fill="#6c3483" font-size="10" font-weight="bold">Puertos Entrada: CreateTicketUseCase · UpdateTicketStatusUseCase · EscalateTicketsUseCase</text>
+  <rect x="26" y="120" width="125" height="180" rx="8" fill="#d5f5e3" stroke="#27ae60" stroke-width="2"/>
+  <text x="89" y="140" text-anchor="middle" fill="#1e8449" font-weight="bold" font-size="11">REST (entrada)</text>
+  <text x="89" y="164" text-anchor="middle" fill="#196f3d" font-size="10">AuthController</text>
+  <text x="89" y="178" text-anchor="middle" fill="#196f3d" font-size="10">TicketController</text>
+  <text x="89" y="192" text-anchor="middle" fill="#196f3d" font-size="10">UserController</text>
+  <text x="89" y="206" text-anchor="middle" fill="#196f3d" font-size="10">TechnicianController</text>
+  <rect x="40" y="216" width="98" height="28" rx="4" fill="#27ae60"/>
+  <text x="89" y="234" text-anchor="middle" fill="white" font-size="10" font-weight="bold">RFC 7807 ProblemDetail</text>
+  <text x="89" y="266" text-anchor="middle" fill="#555" font-size="10">JWT Filter + @PreAuthorize</text>
+  <line x1="151" y1="210" x2="165" y2="210" stroke="#27ae60" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="549" y="120" width="131" height="200" rx="8" fill="#fef9e7" stroke="#f39c12" stroke-width="2"/>
+  <text x="615" y="140" text-anchor="middle" fill="#7d6608" font-weight="bold" font-size="11">JPA (salida)</text>
+  <text x="615" y="158" text-anchor="middle" fill="#7d6608" font-size="10">PersistenceAdapters</text>
+  <text x="615" y="175" text-anchor="middle" fill="#666" font-size="10">TicketPersistence</text>
+  <text x="615" y="189" text-anchor="middle" fill="#666" font-size="10">UserPersistence</text>
+  <text x="615" y="203" text-anchor="middle" fill="#666" font-size="10">TechnicianPersistence</text>
+  <rect x="560" y="215" width="110" height="26" rx="4" fill="#f39c12"/>
+  <text x="615" y="232" text-anchor="middle" fill="white" font-size="10" font-weight="bold">MapStruct</text>
+  <text x="615" y="252" text-anchor="middle" fill="#666" font-size="10">Entity ↔ Domain</text>
+  <rect x="560" y="264" width="110" height="26" rx="4" fill="#e67e22"/>
+  <text x="615" y="281" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Spring Data JPA</text>
+  <text x="615" y="306" text-anchor="middle" fill="#555" font-size="10">JOIN FETCH (sin N+1)</text>
+  <line x1="535" y1="360" x2="549" y2="360" stroke="#f39c12" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="26" y="460" width="165" height="70" rx="8" fill="#2c3e50" stroke="#1a252f" stroke-width="2"/>
+  <text x="109" y="484" text-anchor="middle" fill="white" font-weight="bold" font-size="12">PostgreSQL 16</text>
+  <text x="109" y="500" text-anchor="middle" fill="#aed6f1" font-size="10">Flyway V1 · V2 · V3 · V4</text>
+  <text x="109" y="514" text-anchor="middle" fill="#aed6f1" font-size="10">helpflow database</text>
+  <line x1="549" y1="290" x2="210" y2="490" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrdash)"/>
+  <rect x="430" y="460" width="250" height="70" rx="8" fill="#8e44ad" stroke="#6c3483" stroke-width="2"/>
+  <text x="555" y="484" text-anchor="middle" fill="white" font-weight="bold" font-size="12">technician-dispatch-service</text>
+  <text x="555" y="500" text-anchor="middle" fill="#e8d5f7" font-size="10">POST /technician-dispatch · :8081</text>
+  <text x="555" y="514" text-anchor="middle" fill="#e8d5f7" font-size="10">Hash determinista</text>
+  <line x1="453" y1="388" x2="530" y2="460" stroke="#8e44ad" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrdash)"/>
+  <rect x="26" y="330" width="125" height="110" rx="8" fill="#eaf0fb" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="89" y="350" text-anchor="middle" fill="#1a5276" font-weight="bold" font-size="11">Clientes</text>
+  <rect x="36" y="358" width="104" height="26" rx="4" fill="#3498db"/>
+  <text x="89" y="375" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Swagger UI :8080</text>
+  <rect x="36" y="392" width="104" height="26" rx="4" fill="#5dade2"/>
+  <text x="89" y="409" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Postman / curl</text>
+  <line x1="89" y1="330" x2="89" y2="300" stroke="#3498db" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="205" y="462" width="210" height="70" rx="8" fill="#fdedec" stroke="#e74c3c" stroke-width="1.5"/>
+  <text x="310" y="483" text-anchor="middle" fill="#922b21" font-weight="bold" font-size="11">Observabilidad</text>
+  <text x="310" y="499" text-anchor="middle" fill="#922b21" font-size="10">/actuator/health · /metrics · /prometheus</text>
+  <text x="310" y="514" text-anchor="middle" fill="#922b21" font-size="10">helpflow.tickets.* · helpflow.auth.*</text>
+  <rect x="26" y="546" width="648" height="32" rx="6" fill="white" stroke="#dee2e6" stroke-width="1"/>
+  <rect x="40" y="556" width="12" height="12" fill="#27ae60" rx="2"/>
+  <text x="58" y="566" fill="#333" font-size="10">Adaptador entrada</text>
+  <rect x="160" y="556" width="12" height="12" fill="#f39c12" rx="2"/>
+  <text x="178" y="566" fill="#333" font-size="10">Adaptador salida</text>
+  <rect x="278" y="556" width="12" height="12" fill="#eaf9ea" rx="2" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="296" y="566" fill="#333" font-size="10">Dominio puro</text>
+  <rect x="388" y="556" width="12" height="12" fill="#d6eaf8" rx="2" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="406" y="566" fill="#333" font-size="10">Casos de uso</text>
+  <rect x="508" y="556" width="12" height="12" fill="#8e44ad" rx="2"/>
+  <text x="526" y="566" fill="#333" font-size="10">Servicio externo</text>
+</svg>

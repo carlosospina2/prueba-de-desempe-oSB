@@ -7,6 +7,7 @@ import com.helpflow.support.domain.exception.TicketNotFoundException;
 import com.helpflow.support.domain.model.Ticket;
 import com.helpflow.support.domain.model.TicketHistory;
 import com.helpflow.support.domain.model.enums.TicketStatus;
+import io.micrometer.core.instrument.Counter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,14 @@ public class UpdateTicketStatusService implements UpdateTicketStatusUseCase {
 
     private final TicketRepositoryPort ticketRepo;
     private final TicketHistoryRepositoryPort historyRepo;
+    private final Counter ticketsResolvedCounter;
 
     public UpdateTicketStatusService(TicketRepositoryPort ticketRepo,
-                                     TicketHistoryRepositoryPort historyRepo) {
+                                     TicketHistoryRepositoryPort historyRepo,
+                                     Counter ticketsResolvedCounter) {
         this.ticketRepo = ticketRepo;
         this.historyRepo = historyRepo;
+        this.ticketsResolvedCounter = ticketsResolvedCounter;
     }
 
     @Override
@@ -32,6 +36,12 @@ public class UpdateTicketStatusService implements UpdateTicketStatusUseCase {
         ticket.transitionTo(newStatus);
         Ticket saved = ticketRepo.save(ticket);
         historyRepo.save(new TicketHistory(ticketId, previous, newStatus, observation, changedBy));
+
+        // Increment the resolved counter only when the ticket reaches RESUELTO
+        if (newStatus == TicketStatus.RESUELTO) {
+            ticketsResolvedCounter.increment();
+        }
+
         return saved;
     }
 }

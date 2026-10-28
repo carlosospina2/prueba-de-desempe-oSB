@@ -1,5 +1,6 @@
 package com.helpflow.support.infrastructure.adapter.in.rest;
 
+import com.helpflow.support.application.port.in.AssignTicketUseCase;
 import com.helpflow.support.application.port.in.CreateTicketUseCase;
 import com.helpflow.support.application.port.in.UpdateTicketStatusUseCase;
 import com.helpflow.support.application.port.out.TicketRepositoryPort;
@@ -19,6 +20,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,15 +35,18 @@ public class TicketController {
 
     private final CreateTicketUseCase createTicket;
     private final UpdateTicketStatusUseCase updateStatus;
+    private final AssignTicketUseCase assignTicket;
     private final TicketRepositoryPort ticketRepo;
     private final UserRepositoryPort userRepo;
 
     public TicketController(CreateTicketUseCase createTicket,
                             UpdateTicketStatusUseCase updateStatus,
+                            AssignTicketUseCase assignTicket,
                             TicketRepositoryPort ticketRepo,
                             UserRepositoryPort userRepo) {
         this.createTicket = createTicket;
         this.updateStatus = updateStatus;
+        this.assignTicket = assignTicket;
         this.ticketRepo = ticketRepo;
         this.userRepo = userRepo;
     }
@@ -87,10 +92,25 @@ public class TicketController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get ticket by ID")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Ticket> getById(@PathVariable Long id,
                                            @AuthenticationPrincipal UserDetails principal) {
         Ticket ticket = ticketRepo.findById(id)
             .orElseThrow(() -> new TicketNotFoundException(id));
+        // Ownership check: USUARIO can only see their own tickets.
+        // ADMIN and TECNICO can see any ticket.
+        boolean isAdmin  = principal.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        boolean isTecnico = principal.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_TECNICO"));
+        if (!isAdmin && !isTecnico) {
+            User owner = userRepo.findByEmail(principal.getUsername())
+                .orElseThrow(() -> new UserNotFoundException(principal.getUsername()));
+            if (!ticket.getUserId().equals(owner.getId())) {
+                throw new AccessDeniedException(
+                    "No tienes permiso para ver este ticket");
+            }
+        }
         return ResponseEntity.ok(ticket);
     }
 
@@ -101,6 +121,22 @@ public class TicketController {
                                                 @Valid @RequestBody UpdateStatusRequest req,
                                                 @AuthenticationPrincipal UserDetails principal) {
         Ticket ticket = updateStatus.updateStatus(id, req.newStatus(), req.observation(), principal.getUsername());
+        return ResponseEntity.ok(ticket);
+    }
+
+    /**
+     * Reassign a ticket to a new technician based on speciality and availability.
+     * Restricted to ROLE_ADMIN. Calls AssignTicketUseCase which selects the best
+     * available technician via the existing service logic.
+     *
+     * Returns 200 with the updated ticket, 404 if the ticket does not exist,
+     * 422 if no technician is available or the transition is invalid.
+     */
+    @PostMapping("/{id}/assign")
+    @Operation(summary = "Reassign ticket to an available technician (Admin only)")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Ticket> reassign(@PathVariable Long id) {
+        Ticket ticket = assignTicket.assign(id);
         return ResponseEntity.ok(ticket);
     }
 }

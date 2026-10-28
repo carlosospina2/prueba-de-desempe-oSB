@@ -7,6 +7,8 @@ import com.helpflow.support.domain.exception.UserNotFoundException;
 import com.helpflow.support.domain.model.*;
 import com.helpflow.support.domain.model.enums.*;
 import com.helpflow.support.infrastructure.config.SlaConfig;
+import io.micrometer.core.instrument.Counter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
@@ -21,19 +23,25 @@ public class CreateTicketService implements CreateTicketUseCase {
     private final TicketHistoryRepositoryPort historyRepo;
     private final TechnicianDispatchPort dispatchPort;
     private final SlaConfig slaConfig;
+    private final Counter ticketsCreatedCounter;
+    private final Counter dispatchCallsCounter;
 
     public CreateTicketService(TicketRepositoryPort ticketRepo,
                                UserRepositoryPort userRepo,
                                TechnicianRepositoryPort technicianRepo,
                                TicketHistoryRepositoryPort historyRepo,
                                TechnicianDispatchPort dispatchPort,
-                               SlaConfig slaConfig) {
+                               SlaConfig slaConfig,
+                               Counter ticketsCreatedCounter,
+                               Counter dispatchCallsCounter) {
         this.ticketRepo = ticketRepo;
         this.userRepo = userRepo;
         this.technicianRepo = technicianRepo;
         this.historyRepo = historyRepo;
         this.dispatchPort = dispatchPort;
         this.slaConfig = slaConfig;
+        this.ticketsCreatedCounter = ticketsCreatedCounter;
+        this.dispatchCallsCounter = dispatchCallsCounter;
     }
 
     @Override
@@ -62,12 +70,14 @@ public class CreateTicketService implements CreateTicketUseCase {
         ticket.setSlaDeadline(Instant.now().plus(slaHours, ChronoUnit.HOURS));
 
         Ticket saved = ticketRepo.save(ticket);
+        ticketsCreatedCounter.increment();
 
         historyRepo.save(new TicketHistory(saved.getId(), null, TicketStatus.ABIERTO,
             "Ticket creado", user.getEmail()));
 
         // Attempt assignment via dispatch service
         try {
+            dispatchCallsCounter.increment();
             TechnicianDispatchPort.DispatchResult dispatch = dispatchPort.dispatch(
                 saved.getId(), category.name(), priority.name());
 

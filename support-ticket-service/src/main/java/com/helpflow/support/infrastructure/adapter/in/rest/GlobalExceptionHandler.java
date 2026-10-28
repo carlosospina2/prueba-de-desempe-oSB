@@ -1,6 +1,7 @@
 package com.helpflow.support.infrastructure.adapter.in.rest;
 
 import com.helpflow.support.domain.exception.*;
+import io.micrometer.core.instrument.Counter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -18,6 +19,14 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    private final Counter authFailuresCounter;
+    private final Counter accessDeniedCounter;
+
+    public GlobalExceptionHandler(Counter authFailuresCounter, Counter accessDeniedCounter) {
+        this.authFailuresCounter = authFailuresCounter;
+        this.accessDeniedCounter = accessDeniedCounter;
+    }
 
     @ExceptionHandler(TicketNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleTicketNotFound(TicketNotFoundException ex, WebRequest request) {
@@ -49,11 +58,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        accessDeniedCounter.increment();
         return buildProblem(HttpStatus.FORBIDDEN, "Access Denied", "No tiene permisos para esta operación", request);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ProblemDetail> handleAuth(AuthenticationException ex, WebRequest request) {
+        authFailuresCounter.increment();
         return buildProblem(HttpStatus.UNAUTHORIZED, "Authentication Failed", "Credenciales inválidas", request);
     }
 
