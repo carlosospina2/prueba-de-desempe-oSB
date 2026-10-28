@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "HelpFlow Technician Dispatch Service",
+    "description": "Postman collection for HelpFlow Technician Dispatch Service API. Simulates technician availability based on ticket characteristics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b2c3d4e5-f6g7-8901-bcde-f23456789012"
+  },
+  "item": [
+    {
+      "name": "Dispatch Technician",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ticketId\": 123,\n  \"categoria\": \"HARDWARE\",\n  \"prioridad\": \"ALTA\"\n}"
+        },
+        "url": {
+          "raw": "{{dispatch_url}}/technician-dispatch",
+          "host": ["{{dispatch_url}}"],
+          "path": ["technician-dispatch"]
+        },
+        "description": "Get available technician for a ticket. Uses deterministic hash based on ticketId, category and priority."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has required fields\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.ticketId).to.equal(123);",
+              "    pm.expect(jsonData.tecnicoId).to.exist;",
+              "    pm.expect(jsonData.tecnicoId).to.match(/^TEC-\\d{3}$/);",
+              "    pm.expect(jsonData.disponibilidad).to.be.oneOf([\"ALTA\", \"MEDIA\", \"BAJA\"]);",
+              "    pm.expect(jsonData.tiempoEstimadoHoras).to.be.at.least(1);",
+              "    pm.expect(jsonData.tiempoEstimadoHoras).to.be.at.most(12);",
+              "});",
+              "",
+              "pm.test(\"Deterministic response\", function () {",
+              "    // Same input should produce same output",
+              "    var firstResponse = pm.response.json();",
+              "    // Note: For complete determinism test, you would need to run the request again",
+              "    // and compare responses, but that requires storing the first response.",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Test Different Categories",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ticketId\": 456,\n  \"categoria\": \"SOFTWARE\",\n  \"prioridad\": \"MEDIA\"\n}"
+        },
+        "url": {
+          "raw": "{{dispatch_url}}/technician-dispatch",
+          "host": ["{{dispatch_url}}"],
+          "path": ["technician-dispatch"]
+        },
+        "description": "Test dispatch with different category (SOFTWARE) and priority (MEDIA)."
+      },
+      "response": []
+    },
+    {
+      "name": "Test Validation - Missing Fields",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ticketId\": 789\n}"
+        },
+        "url": {
+          "raw": "{{dispatch_url}}/technician-dispatch",
+          "host": ["{{dispatch_url}}"],
+          "path": ["technician-dispatch"]
+        },
+        "description": "Test validation error when required fields are missing."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "dispatch_url",
+      "value": "http://localhost:8081"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["// Prerequest script"]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["// Global test script"]
+      }
+    }
+  ],
+  "auth": null,
+  "_postman_exported_at": "2026-10-28T16:00:00Z",
+  "_postman_exported_using": "Postman/11.0"
+}

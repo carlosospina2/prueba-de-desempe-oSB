@@ -36,10 +36,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints: authentication and documentation
+                // Public endpoints: authentication, documentation, and the static web interface
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/", "/index.html", "/styles.css", "/app.js").permitAll()
                 // All other API endpoints require a valid JWT; fine-grained role
                 // enforcement is handled exclusively by @PreAuthorize on each method.
                 // This avoids ordering conflicts between URL matchers and method security.

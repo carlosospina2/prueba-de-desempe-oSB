@@ -1,0 +1,410 @@
+{
+  "info": {
+    "name": "HelpFlow Support Ticket Service",
+    "description": "Postman collection for HelpFlow Support Ticket Service API. Covers authentication, ticket management, and administrative operations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "User registration and login endpoints",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"document\": \"CC12345678\",\n  \"name\": \"Test User\",\n  \"email\": \"test@helpflow.com\",\n  \"password\": \"TestPassword123!\",\n  \"sede\": \"Bogotá\",\n  \"area\": \"TI\",\n  \"role\": \"ROLE_USUARIO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user. Returns JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with credentials. Saves JWT token to environment."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.token).to.exist;",
+                  "    pm.expect(jsonData.token).to.be.a('string');",
+                  "    pm.expect(jsonData.email).to.equal(pm.environment.get(\"admin_email\"));",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set(\"jwtToken\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ticket Management",
+      "description": "Ticket creation and viewing endpoints",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"PC no enciende\",\n  \"description\": \"La PC del puesto 12 no arranca desde esta mañana\",\n  \"category\": \"HARDWARE\",\n  \"priority\": \"ALTA\",\n  \"sede\": \"Bogotá\",\n  \"affectedAsset\": \"PC-BOG-012\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tickets",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets"]
+            },
+            "description": "Create a new support ticket. Requires USUARIO or ADMIN role."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has ticket ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.exist;",
+                  "    pm.expect(jsonData.title).to.equal(\"PC no enciende\");",
+                  "    pm.expect(jsonData.status).to.be.oneOf([\"ABIERTO\", \"ASIGNADO\"]);",
+                  "    pm.environment.set(\"created_ticket_id\", jsonData.id.toString());",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Get My Tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/my",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "my"]
+            },
+            "description": "Get tickets belonging to the authenticated user. Requires USUARIO or ADMIN role."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{created_ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{created_ticket_id}}"]
+            },
+            "description": "Get specific ticket by ID. USUARIO can only see their own tickets. ADMIN and TECNICO can see any ticket."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Ticket ID matches\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"created_ticket_id\")));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Administrative Operations",
+      "description": "Admin-only endpoints",
+      "item": [
+        {
+          "name": "Get All Tickets (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tickets",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets"]
+            },
+            "description": "Get all tickets in the system. ADMIN role required."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Update Ticket Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStatus\": \"EN_PROGRESO\",\n  \"observation\": \"Starting work on hardware issue\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{created_ticket_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{created_ticket_id}}", "status"]
+            },
+            "description": "Update ticket status. Requires TECNICO or ADMIN role."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Status updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(\"EN_PROGRESO\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Reassign Ticket (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{created_ticket_id}}/assign",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{created_ticket_id}}", "assign"]
+            },
+            "description": "Reassign ticket to available technician. ADMIN role required."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Ticket has technician assigned\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.assignedTechnicianId).to.exist;",
+                  "    pm.expect(jsonData.status).to.equal(\"ASIGNADO\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Get all users in the system. ADMIN role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Technicians (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/technicians",
+              "host": ["{{base_url}}"],
+              "path": ["api", "technicians"]
+            },
+            "description": "Get all technicians. ADMIN role required."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["// Prerequest script"]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["// Global test script"]
+      }
+    }
+  ],
+  "auth": null,
+  "_postman_exported_at": "2026-10-28T16:00:00Z",
+  "_postman_exported_using": "Postman/11.0"
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HelpFlow support ticket management">
+  <title>HelpFlow | Soporte TI</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="HelpFlow, inicio">
+      <span class="brand-mark">H</span>
+      <span>HelpFlow <small>Soporte TI</small></span>
+    </a>
+    <div id="connectionStatus" class="connection-status"><span class="status-dot"></span> API local</div>
+  </header>
+
+  <main class="page-shell">
+    <section id="authPanel" class="auth-layout">
+      <div class="intro-panel">
+        <p class="eyebrow">MESA DE AYUDA</p>
+        <h1>Resolvamos tus solicitudes de soporte.</h1>
+        <p>Registra tickets, consulta su estado y mantén el seguimiento en un solo lugar.</p>
+        <div class="intro-note"><span>✓</span> Seguimiento claro para cada solicitud</div>
+      </div>
+
+      <div class="card auth-card">
+        <div class="tab-list" role="tablist" aria-label="Acceso a HelpFlow">
+          <button id="loginTab" class="tab active" type="button" role="tab" aria-selected="true">Iniciar sesión</button>
+          <button id="registerTab" class="tab" type="button" role="tab" aria-selected="false">Crear cuenta</button>
+        </div>
+
+        <form id="loginForm" class="form-stack">
+          <div>
+            <h2>Bienvenido de nuevo</h2>
+            <p class="muted">Ingresa con tu correo y contraseña.</p>
+          </div>
+          <label>Correo electrónico
+            <input name="email" type="email" autocomplete="username" placeholder="nombre@empresa.com" required>
+          </label>
+          <label>Contraseña
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="button primary full" type="submit">Entrar</button>
+        </form>
+
+        <form id="registerForm" class="form-stack hidden">
+          <div>
+            <h2>Crear cuenta</h2>
+            <p class="muted">Regístrate para gestionar tus tickets.</p>
+          </div>
+          <label>Documento
+            <input name="document" required>
+          </label>
+          <label>Nombre completo
+            <input name="name" required>
+          </label>
+          <label>Correo electrónico
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Contraseña <span class="hint">(mínimo 8 caracteres)</span>
+            <input name="password" type="password" minlength="8" autocomplete="new-password" required>
+          </label>
+          <div class="field-row">
+            <label>Sede
+              <input name="sede" required>
+            </label>
+            <label>Área
+              <input name="area" required>
+            </label>
+          </div>
+          <button class="button primary full" type="submit">Crear cuenta</button>
+        </form>
+        <p id="authMessage" class="message" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="appPanel" class="hidden">
+      <div class="welcome-row">
+        <div>
+          <p class="eyebrow">PANEL DE SOPORTE</p>
+          <h1>Hola, <span id="userName">usuario</span></h1>
+          <p class="muted">Desde aquí puedes gestionar tus solicitudes.</p>
+        </div>
+        <div class="session-actions">
+          <span id="roleBadge" class="role-badge"></span>
+          <button id="logoutButton" class="button secondary" type="button">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div id="appMessage" class="message banner" role="status" aria-live="polite"></div>
+
+      <div class="dashboard-grid">
+        <section id="createTicketSection" class="card content-card">
+          <div class="section-heading">
+            <div><p class="eyebrow">NUEVA SOLICITUD</p><h2>Crear ticket</h2></div>
+            <span class="heading-icon">＋</span>
+          </div>
+          <form id="ticketForm" class="form-stack">
+            <label>Título
+              <input name="title" maxlength="200" placeholder="Ej. El equipo no enciende" required>
+            </label>
+            <label>Descripción
+              <textarea name="description" rows="4" placeholder="Cuéntanos qué sucede..." required></textarea>
+            </label>
+            <div class="field-row">
+              <label>Categoría
+                <select name="category" required>
+                  <option value="HARDWARE">Hardware</option>
+                  <option value="SOFTWARE">Software</option>
+                  <option value="RED">Red</option>
+                  <option value="ACCESOS">Accesos</option>
+                  <option value="OTRO">Otro</option>
+                </select>
+              </label>
+              <label>Prioridad
+                <select name="priority" required>
+                  <option value="BAJA">Baja</option>
+                  <option value="MEDIA" selected>Media</option>
+                  <option value="ALTA">Alta</option>
+                  <option value="CRÍTICA">Crítica</option>
+                </select>
+              </label>
+            </div>
+            <div class="field-row">
+              <label>Sede
+                <input name="sede" required>
+              </label>
+              <label>Activo afectado <span class="hint">(opcional)</span>
+                <input name="affectedAsset" placeholder="Ej. PC-BOG-012">
+              </label>
+            </div>
+            <button class="button primary" type="submit">Enviar solicitud</button>
+          </form>
+        </section>
+
+        <section class="card content-card tickets-panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">SEGUIMIENTO</p><h2 id="ticketListTitle">Mis tickets</h2></div>
+            <button id="refreshButton" class="button icon-button" type="button" aria-label="Actualizar lista" title="Actualizar">↻</button>
+          </div>
+          <p id="ticketHelp" class="muted"></p>
+          <form id="ticketLookupForm" class="lookup-row hidden">
+            <label class="sr-only" for="ticketIdInput">Número de ticket</label>
+            <input id="ticketIdInput" type="number" min="1" placeholder="Número de ticket" required>
+            <button class="button secondary" type="submit">Buscar</button>
+          </form>
+          <div id="ticketList" class="ticket-list"></div>
+          <div id="emptyState" class="empty-state hidden">
+            <span class="empty-icon">▤</span>
+            <strong>No hay tickets para mostrar</strong>
+            <span>Cuando haya solicitudes, aparecerán aquí.</span>
+          </div>
+        </section>
+      </div>
+      <footer class="footer">HelpFlow · Gestión de soporte TI</footer>
+    </section>
+  </main>
+</body>
+</html>

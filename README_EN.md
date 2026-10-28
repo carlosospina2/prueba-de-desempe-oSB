@@ -691,6 +691,78 @@ Connected to docker: Server Version: 29.7.2, API Version: 1.55
 
 **Note:** This file is **not** included in the repository (it's user-specific). It's equivalent to installing Docker itself — a prerequisite for running integration tests with Testcontainers.
 
+## Postman API Testing
+
+Ready-to-use Postman collections are available in the `docs/postman/` directory for testing both services.
+
+### Available Collections:
+
+| File | Description |
+|---|---|
+| `helpflow-local.postman_environment.json` | Environment variables for local development |
+| `support-ticket-service.postman_collection.json` | Collection for main ticket service API |
+| `technician-dispatch-service.postman_collection.json` | Collection for technician dispatch service |
+
+### How to Import:
+
+1. **Open Postman** and click the **Import** button
+2. Select the three JSON files from `docs/postman/`
+3. **Set the active environment** to "HelpFlow Local"
+4. **Update credentials** in the environment (passwords are seeded in the database)
+
+### Environment Variables:
+
+| Variable | Default Value | Description |
+|---|---|---|
+| `base_url` | `http://localhost:8080` | Main service URL |
+| `dispatch_url` | `http://localhost:8081` | Dispatch service URL |
+| `jwtToken` | *(auto-set)* | JWT token saved after login |
+| `admin_email` | `admin@helpflow.com` | Admin user email |
+| `admin_password` | `Admin1234!` | Admin password |
+| `usuario_email` | `usuario@helpflow.com` | Regular user email |
+| `usuario_password` | `Admin1234!` | User password |
+| `tecnico_email` | `tecnico@helpflow.com` | Technician email |
+| `tecnico_password` | `Admin1234!` | Technician password |
+| `created_ticket_id` | *(auto-set)* | ID of created ticket |
+
+### Recommended Testing Workflow:
+
+1. **Start the services:**
+   ```bash
+   docker compose up --build
+   ```
+
+2. **Import collections** into Postman as described above
+
+3. **Run the Login request** (under Authentication → Login) to obtain a JWT token
+   - The test script automatically saves the token to the `jwtToken` environment variable
+
+4. **Execute requests in order:**
+   - Create Ticket
+   - Get My Tickets
+   - Get Ticket by ID
+   - Update Ticket Status (requires TECNICO or ADMIN token)
+   - Reassign Ticket (ADMIN only)
+
+5. **Test the dispatch service** with different ticket parameters
+
+### Collection Features:
+
+- **Authentication flow:** Login saves JWT token automatically
+- **Role-based testing:** Different credentials for USUARIO, TECNICO, ADMIN roles
+- **Test scripts:** Validates HTTP status codes and response formats
+- **Environment variables:** Clean separation of configuration from requests
+- **Deterministic testing:** Dispatch service responses are predictable
+
+### Testing Both Roles:
+
+To test different roles, update the email/password in the Login request:
+- **Admin:** `admin@helpflow.com` / `Admin1234!`
+- **Technician:** `tecnico@helpflow.com` / `Admin1234!`
+- **User:** `usuario@helpflow.com` / `Admin1234!`
+
+**Note:** The collections use the seeded credentials from Flyway migrations V3/V4. Change passwords in production environments.
+
 ---
 
 ## Diagrams
